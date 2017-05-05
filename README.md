@@ -4,7 +4,7 @@ A common lib for Dell Server management via out of band management controller, w
 
 wsmanlib has classes that communicate over https to the target compute node exposing standard SOAP based webservices for management and monitoring. 
 
-Almost each endpoint functin is wrapped in a Java class called Command, different commands have been added for different purpose.
+Almost each endpoint function is wrapped in a Java class called Command, different commands have been added for different purpose.
 
 Features Available 
 
@@ -26,7 +26,7 @@ Features Available
  
  9-  Node Reboot
  
- 10- Node Power Actins 
+ 10- Node Power Actions 
  
 
 
@@ -51,7 +51,7 @@ compile(group: 'com.dell.isg.smi', name: 'wsmanlib', version: '1.0.1')
   
 ### API Usage 
 
-Once Jar is downloaded or built from source code, the lib is ready for use, there are many commands available e.g 
+Once Jar is downloaded or built from source code, the library is ready for use, there are many commands available e.g 
 
    EnumerateSoftwareIdentityForHostCmd enumerateSoftwareIdentityForHostCmd=null;
 
