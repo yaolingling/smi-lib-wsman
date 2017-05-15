@@ -11,17 +11,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.dell.isg.smi.wsmanclient.WSManClientFactory;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
-import com.dell.isg.smi.wsman.command.WaitForLC;
 import com.dell.isg.smi.wsman.command.WaitForLC.WaitForLCResponse;
 import com.dell.isg.smi.wsman.command.idraccmd.IdracJobStatusCheckCmd;
 import com.dell.isg.smi.wsman.entity.ResourceURIInfo;
 import com.dell.isg.smi.wsman.model.XmlConfig;
 import com.dell.isg.smi.wsman.utilities.XMLTool;
-import com.sun.ws.management.addressing.Addressing;
+import com.dell.isg.smi.wsmanclient.WSManClientFactory;
 
 /**
  * @author rahman.muhammad

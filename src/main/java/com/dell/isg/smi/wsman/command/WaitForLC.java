@@ -8,8 +8,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.isg.smi.wsmanclient.IWSManCompoundCommand;
 import com.dell.isg.smi.wsman.model.LCStatus;
+import com.dell.isg.smi.wsmanclient.IWSManCompoundCommand;
 
 /**
  * The {@code SetEventsCmd} compound command sets an SNMP alert destination for the iDRAC.

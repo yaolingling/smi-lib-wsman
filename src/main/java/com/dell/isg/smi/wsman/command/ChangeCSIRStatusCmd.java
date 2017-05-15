@@ -6,8 +6,8 @@
  */
 package com.dell.isg.smi.wsman.command;
 
-import static com.dell.isg.smi.commons.elm.CommonConstants.THIRTY_SEC;
-import static com.dell.isg.smi.commons.elm.CommonConstants.TWENTY_SEC;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.THIRTY_SEC;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.TWENTY_SEC;
 
 import java.io.IOException;
 

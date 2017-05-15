@@ -8,12 +8,12 @@ import javax.xml.xpath.XPathConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.isg.smi.wsmanclient.WSManConstants;
-import com.dell.isg.smi.wsmanclient.util.WSManUtils;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
 import com.dell.isg.smi.wsman.entity.ResourceURIInfo;
+import com.dell.isg.smi.wsmanclient.WSManConstants;
+import com.dell.isg.smi.wsmanclient.util.WSManUtils;
 import com.sun.ws.management.addressing.Addressing;
 
 public class BlinkLED extends WSManBaseCommand {

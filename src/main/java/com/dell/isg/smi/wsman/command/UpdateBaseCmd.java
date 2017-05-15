@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.dell.isg.smi.commons.elm.utilities.xml.XmlHelper;
+import com.dell.isg.smi.commons.utilities.xml.XmlHelper;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.entity.LifeCycleJob;
 import com.dell.isg.smi.wsman.utilities.IceeUtils;

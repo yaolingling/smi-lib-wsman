@@ -15,10 +15,10 @@ import javax.xml.xpath.XPathFactory;
 
 import org.slf4j.Logger;
 
-import static com.dell.isg.smi.commons.elm.CommonConstants.FIFTEEN_SEC;
-import static com.dell.isg.smi.commons.elm.CommonConstants.TWENTY_SEC;
-import static com.dell.isg.smi.commons.elm.CommonConstants.FOUR_MIN;
-import static com.dell.isg.smi.commons.elm.CommonConstants.TEN_SEC;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.FIFTEEN_SEC;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.TWENTY_SEC;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.FOUR_MIN;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.TEN_SEC;
 
 import org.slf4j.LoggerFactory;
 
