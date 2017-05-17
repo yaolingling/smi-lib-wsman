@@ -6,20 +6,14 @@
  */
 package com.dell.isg.smi.wsman.command;
 
-import com.sun.ws.management.addressing.Addressing;
-
-import javax.xml.xpath.XPathConstants;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
-import com.dell.isg.smi.wsman.WSManBaseCommand.WSManClassEnum;
-import com.dell.isg.smi.wsman.WSManBaseCommand.WSManMethodEnum;
-import com.dell.isg.smi.wsman.WSManBaseCommand.WSManMethodParamEnum;
 import com.dell.isg.smi.wsman.entity.ResourceURIInfo;
+import com.sun.ws.management.addressing.Addressing;
 
 /**
  * @author rahman.muhammad

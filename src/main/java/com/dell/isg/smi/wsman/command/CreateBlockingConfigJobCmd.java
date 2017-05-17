@@ -3,7 +3,7 @@
  */
 package com.dell.isg.smi.wsman.command;
 
-import static com.dell.isg.smi.commons.elm.CommonConstants.FIFTEEN_MIN;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.FIFTEEN_MIN;
 
 import java.util.ArrayList;
 import java.util.List;

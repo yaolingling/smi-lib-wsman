@@ -19,11 +19,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.dell.isg.smi.wsmanclient.util.WSManUtils;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManClientBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
 import com.dell.isg.smi.wsman.command.entity.NICStatistics;
+import com.dell.isg.smi.wsmanclient.util.WSManUtils;
 import com.sun.ws.management.addressing.Addressing;
 
 public class EnumerateNICStatisticsCmd extends WSManClientBaseCommand<List<NICStatistics>> {

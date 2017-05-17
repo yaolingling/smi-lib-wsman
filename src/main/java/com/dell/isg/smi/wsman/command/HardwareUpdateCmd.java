@@ -17,7 +17,6 @@ import javax.xml.soap.SOAPFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.isg.smi.commons.elm.CommonConstants;
 import com.dell.isg.smi.wsman.ComponentIds;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManageSession;
@@ -30,6 +29,7 @@ import com.dell.isg.smi.wsman.exceptions.PackageNotApplicableException;
 import com.dell.isg.smi.wsman.exceptions.PackageNotSupportedException;
 import com.dell.isg.smi.wsman.utilities.Utilities;
 import com.dell.isg.smi.wsman.utilities.XMLTool;
+import com.dell.isg.smi.commons.utilities.constants.CommonConstants;
 
 public class HardwareUpdateCmd extends UpdateBaseCmd {
     int port = 443;

@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.dell.isg.smi.commons.elm.CommonConstants;
-import com.dell.isg.smi.commons.elm.utilities.xml.XmlHelper;
+import com.dell.isg.smi.commons.utilities.xml.XmlHelper;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
@@ -24,6 +23,7 @@ import com.dell.isg.smi.wsman.command.entity.DCIMBIOSEnumerationType;
 import com.dell.isg.smi.wsman.command.entity.SetAttributeOUTPUT;
 import com.dell.isg.smi.wsman.utilities.ExceptionUtilities;
 import com.sun.ws.management.addressing.Addressing;
+import com.dell.isg.smi.commons.utilities.constants.CommonConstants;
 
 public class UpdateBIOSAttributeCmd extends WSManBaseCommand {
 

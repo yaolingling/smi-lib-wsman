@@ -18,12 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.isg.smi.commons.elm.CommonConstants;
 import com.dell.isg.smi.commons.elm.exception.RuntimeCoreException;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
 import com.sun.ws.management.addressing.Addressing;
+import com.dell.isg.smi.commons.utilities.constants.CommonConstants;
 
 /**
  * @author anthony_crouch

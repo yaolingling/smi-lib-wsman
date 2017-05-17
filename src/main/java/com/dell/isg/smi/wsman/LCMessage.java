@@ -3,8 +3,6 @@
  */
 package com.dell.isg.smi.wsman;
 
-import com.dell.isg.smi.commons.elm.CommonConstants;
-
 public class LCMessage {
     public String getMessage() {
         return message;

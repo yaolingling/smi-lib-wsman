@@ -3,8 +3,6 @@
  */
 package com.dell.isg.smi.wsman.command;
 
-import static com.dell.isg.smi.commons.elm.CommonConstants.THIRTY_SEC;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.dell.isg.smi.commons.elm.utilities.xml.XmlHelper;
+import com.dell.isg.smi.commons.utilities.xml.XmlHelper;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
@@ -26,6 +24,7 @@ import com.dell.isg.smi.wsman.command.entity.DCIMBIOSEnumerationType;
 import com.dell.isg.smi.wsman.command.entity.SetAttributesOUTPUT;
 import com.dell.isg.smi.wsman.utilities.ExceptionUtilities;
 import com.sun.ws.management.addressing.Addressing;
+import com.dell.isg.smi.commons.utilities.constants.CommonConstants;
 
 public class UpdateBIOSAttributesCmd extends WSManBaseCommand {
 
@@ -164,7 +163,7 @@ public class UpdateBIOSAttributesCmd extends WSManBaseCommand {
                         }
                         // handlePendingConfigurationJob(exceptionString.toString());
                         logger.info("Retrying UpdateBIOSAttributes command...");
-                        Thread.sleep(THIRTY_SEC);
+                        Thread.sleep(CommonConstants.THIRTY_SEC);
                     }
                 }
             }
@@ -220,7 +219,7 @@ public class UpdateBIOSAttributesCmd extends WSManBaseCommand {
 
             if (!complete) {
                 for (int j = 0; j < MAX_RETRY; j++) {
-                    Thread.sleep(THIRTY_SEC);
+                    Thread.sleep(CommonConstants.THIRTY_SEC);
                     complete = checkIfAttributesSet();
 
                     if (complete) {

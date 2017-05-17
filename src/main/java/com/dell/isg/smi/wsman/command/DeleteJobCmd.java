@@ -3,7 +3,7 @@
  */
 package com.dell.isg.smi.wsman.command;
 
-import static com.dell.isg.smi.commons.elm.CommonConstants.FIVE_MIN;
+import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.FIVE_MIN;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.xpath.XPath;

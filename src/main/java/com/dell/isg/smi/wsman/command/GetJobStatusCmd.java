@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import com.dell.isg.smi.commons.elm.CommonConstants;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManageSession;
 import com.dell.isg.smi.wsman.entity.LifeCycleJob;
 import com.sun.ws.management.addressing.Addressing;
+import com.dell.isg.smi.commons.utilities.constants.CommonConstants;
 
 public class GetJobStatusCmd extends UpdateBaseCmd {
     // private static String resourceUri ="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/root/dcim/DCIM_LifecycleJob";
