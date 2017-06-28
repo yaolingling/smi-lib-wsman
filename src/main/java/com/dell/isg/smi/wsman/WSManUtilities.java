@@ -4,7 +4,11 @@
 package com.dell.isg.smi.wsman;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -13,6 +17,11 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONML;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 
 import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.FIFTEEN_SEC;
@@ -21,8 +30,17 @@ import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.FOUR_
 import static com.dell.isg.smi.commons.utilities.constants.CommonConstants.TEN_SEC;
 
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.dell.isg.smi.wsmanclient.util.Trigger;
+import com.fasterxml.jackson.core.JsonParser;
+
+import springfox.documentation.spring.web.json.Json;
+
+import com.dell.isg.smi.commons.elm.exception.RuntimeCoreException;
 import com.dell.isg.smi.wsman.command.DeleteJobCmd;
 import com.dell.isg.smi.wsman.command.EnumerateCSIRCmd;
 import com.dell.isg.smi.wsman.command.EnumerateJobs;
@@ -366,4 +384,52 @@ public class WSManUtilities {
         return result;
 
     }
+    
+
+    public static Object toJson(Document response)  {
+        Element element = response.getDocumentElement();
+        NodeList nodeList = element.getElementsByTagNameNS(WSCommandRNDConstant.WS_MAN_NAMESPACE, WSCommandRNDConstant.WSMAN_ITEMS_TAG);
+        List<Object> jNodes = new ArrayList<Object>();
+        processNodeList(nodeList, jNodes);
+        return jNodes.size() == 1 ? jNodes.get(0) : jNodes;        
+    }
+
+
+	/**
+	 * @param nodeList - the dom node list to be processed
+	 * @param jNodes - the list to be populated with results
+	 */
+	private static void processNodeList(NodeList nodeList, List<Object> jNodes) {
+        Map<String, Object> nodeMap = new HashMap<String, Object>();
+        
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Element.ELEMENT_NODE) {
+                if (node.hasChildNodes() && node.getChildNodes().item(0).getNodeType() == Element.ELEMENT_NODE) {
+                	processNodeList(node.getChildNodes(), jNodes);
+                } else {
+	        		String key = node.getLocalName();
+	        		String content = node.getTextContent();
+	        		if (nodeMap.containsKey(key) == false) {
+	                    nodeMap.put(key, content);
+	                } else {
+	                	Object o = nodeMap.get(key);
+	                	if(o instanceof String){
+	                		List<String> valueList = new LinkedList<String>();
+	                		valueList.add(o.toString());
+	                		valueList.add(content);
+	                		nodeMap.put(key, valueList);
+	                	} else {
+	                		List<String> list = (List<String>) nodeMap.get(key);
+	                		list.add(content);
+	                	}
+	                }
+                }
+            }
+        }
+        if(!nodeMap.isEmpty()){
+        	jNodes.add(nodeMap);
+        }
+	}
+    
 }

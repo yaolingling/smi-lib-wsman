@@ -92,6 +92,8 @@ dependencies {
 	compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
 	//compile group: 'wiseman', name: 'wiseman', version: '2.0'
 	compile files('src/main/lib/wiseman.jar')
+	compile group: 'org.json', name: 'json', version: '20170516'
+	
 }
 
 test {

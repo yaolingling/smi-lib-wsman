@@ -6,6 +6,7 @@ package com.dell.isg.smi.wsman.command;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -20,8 +21,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.dell.isg.smi.wsman.IdracWSManClient;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
+import com.dell.isg.smi.wsman.WSManClientFactory;
 import com.dell.isg.smi.wsman.WSManageSession;
 import com.dell.isg.smi.wsman.command.entity.DCIMSystemViewType;
 import com.dell.isg.smi.wsman.entity.DeviceLicense;
@@ -55,6 +58,21 @@ public class GetDeviceLicensesCmd extends WSManBaseCommand {
         return sb.toString();
     }
 
+    public static void main(String [] args){
+    	GetDeviceLicensesCmd cmd = new GetDeviceLicensesCmd("100.68.124.34", "root", "calvin", false);
+    	try {
+    		Object result;
+    		result = cmd.execute();
+    		
+            //IdracWSManClient idracWsManClient = WSManClientFactory.getIdracWSManClient("100.68.124.34", "root", "calvin");
+            //result = idracWsManClient.execute(new EnumerateBIOSStringCmd());
+            
+            int x = 0;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -116,9 +134,9 @@ public class GetDeviceLicensesCmd extends WSManBaseCommand {
                                     if (license.getLicenseAttributes().equalsIgnoreCase(UNBOUND)) {
                                         try {
                                             EnumerateSystemViewCmd viewCmd = new EnumerateSystemViewCmd(session.getIpAddress(), session.getUser(), session.getPassword());
-                                            DCIMSystemViewType type = viewCmd.execute();
+                                            Map<String,String> type = (Map<String, String>) viewCmd.execute();
                                             if (type != null)
-                                                license.setServiceTag(type.getServiceTag().getValue().toString());
+                                                license.setServiceTag(type.get("ServiceTag"));
                                         } catch (Exception exp) {
                                             license.setServiceTag("UNKNOWN");
                                             logger.error(exp.getMessage());

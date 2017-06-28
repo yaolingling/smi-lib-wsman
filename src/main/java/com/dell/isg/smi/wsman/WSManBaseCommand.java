@@ -38,6 +38,7 @@ import com.dell.isg.smi.commons.elm.exception.RuntimeCoreException;
 import com.dell.isg.smi.wsman.WSManageSession.EnumReferenceParam;
 import com.dell.isg.smi.wsman.command.PersonalNamespaceContext;
 import com.dell.isg.smi.wsman.command.entity.WsmanCredentials;
+import com.dell.isg.smi.wsmanclient.util.WSManUtils;
 import com.sun.ws.management.addressing.Addressing;
 import com.sun.ws.management.enumeration.Enumeration;
 import com.sun.ws.management.enumeration.EnumerationExtensions.Mode;
@@ -89,6 +90,11 @@ public abstract class WSManBaseCommand {
 
 
     public abstract Object execute() throws Exception;
+
+    protected Object sendRequestEnumerationReturnJson() throws Exception {
+        Document tempDoc = WSManUtils.toDocument(getSession().sendRequestEnumerationGetXml(null));
+        return WSManUtilities.toJson(tempDoc);
+    }
 
 
     protected NodeList sendRequestEnumerationReturnNodeList() throws Exception {

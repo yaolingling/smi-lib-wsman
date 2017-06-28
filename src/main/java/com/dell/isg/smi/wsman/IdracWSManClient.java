@@ -6,6 +6,7 @@
  */
 package com.dell.isg.smi.wsman;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +15,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -27,6 +29,8 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.dmtf.schemas.wbem.wsman._1.wsman.AttributableDuration;
 import org.dmtf.schemas.wbem.wsman._1.wsman.AttributableURI;
+import org.dmtf.schemas.wbem.wsman._1.wsman.SelectorSetType;
+import org.dmtf.schemas.wbem.wsman._1.wsman.SelectorType;
 import org.w3._2003._05.soap_envelope.Envelope;
 import org.w3._2003._05.soap_envelope.Header;
 import org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI;
@@ -66,7 +70,6 @@ public class IdracWSManClient extends DefaultWSManClient implements IWSManClient
     IdracWSManClient(URL destination, String username, String password) {
         super(destination, username, password);
     }
-
 
     public <T> T execute(IWSManClientCommand<T> cmd) throws IOException, WSManException, Exception {
         return cmd.parse(executeXML(cmd));
@@ -200,14 +203,17 @@ public class IdracWSManClient extends DefaultWSManClient implements IWSManClient
         JAXBElement<AttributedURI> action = wsa.createAction(actionURI);
         header.getAny().add(action);
 
-        // SelectorSet header (if any)
-        /*
-         * List<Pair<String, String>> selectors = cmd.getSelectors(); if (selectors != null) { SelectorSetType selectorSetType = wsman.createSelectorSetType();
-         * JAXBElement<SelectorSetType> selectorSet = wsman.createSelectorSet(selectorSetType); header.getAny().add(selectorSet);
-         * 
-         * for (Pair<String, String> kv : selectors) { SelectorType selectorType = wsman.createSelectorType(); selectorType.setName(kv.getKey());
-         * selectorType.getContent().add(kv.getValue()); selectorSetType.getSelector().add(selectorType); } }
-         */
+        // SelectorSet header (if any)        
+        List<SelectorType> selectors = cmd.getSelectors();
+        if (selectors != null) {
+        	SelectorSetType selectorSetType = wsman.createSelectorSetType();
+        	JAXBElement<SelectorSetType> selectorSet = wsman.createSelectorSet(selectorSetType);
+        	header.getAny().add(selectorSet);
+        
+	        for(SelectorType s : selectors) { 
+	        	selectorSetType.getSelector().add(s);
+	       	}    
+        }
         envelope.setBody(cmd.getBody());
 
         try {
