@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
+ * Copyright ï¿½ 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
  */
 package com.dell.isg.smi.wsman.command.idraccmd;
 
@@ -176,7 +176,7 @@ public class IdracJobStatusCheckCmd extends WSManBaseCommand {
             logger.error(e.getMessage());
             throw new RuntimeCoreException(e.getMessage());
         }
-        response.setResult(XmlConfig.JobStatus.FAILURE.toString());
+        response.setResult(XmlConfig.JobStatus.UNKNOWN.toString());
         response.setJobID(this.getJobID());
         response.setMessage(this.getLCErrorStr());
         return response;
