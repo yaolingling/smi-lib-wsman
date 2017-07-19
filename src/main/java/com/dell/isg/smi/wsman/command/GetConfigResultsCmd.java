@@ -22,7 +22,7 @@ public class GetConfigResultsCmd extends WSManBaseCommand {
 	private WSManageSession session = null;
 	private static final Logger logger = LoggerFactory.getLogger(GetConfigResultsCmd.class);
 
-	public GetConfigResultsCmd(String ipAddr, String userName, String passwd, String jobId) {
+	public GetConfigResultsCmd(String ipAddr, String userName, String passwd, String jobId) throws Exception {
 		super(ipAddr, userName, passwd);
 		if (logger.isTraceEnabled()) {
 			logger.trace(String.format("Entering constructor: GetConfigResultsCmd (String hostName - %s, User - %s)",
@@ -30,22 +30,23 @@ public class GetConfigResultsCmd extends WSManBaseCommand {
 		}
 		session = this.getSession();
 		session.setResourceUri(getResourceURI());
-		session.addSelector(WSCommandRNDConstant.INSTANCE_ID, WSCommandRNDConstant.DCIM_LCLOG);
-		session.addSelector(WSCommandRNDConstant.CIM_NAMESPACE, WSCommandRNDConstant.osdsvcnamespace);
-		session.setInvokeCommand(WSManMethodEnum.GET_CONFIG_RESULTS.toString());
 		session.addUserParam("JobID", jobId);
 
 		logger.trace("Exiting constructor: GetConfigResultsCmd()");
 	}
+	
 
 	public String getResourceURI() {
 		StringBuilder sb = new StringBuilder(WSCommandRNDConstant.osdsvcdellbaseuri);
 		sb.append(WSManClassEnum.DCIM_LCRecordLog);
+		session.addSelector(WSCommandRNDConstant.INSTANCE_ID, WSCommandRNDConstant.DCIM_LCLOG);
+		session.addSelector(WSCommandRNDConstant.CIM_NAMESPACE, WSCommandRNDConstant.osdsvcselector);
+		session.setInvokeCommand(WSManMethodEnum.GET_CONFIG_RESULTS.toString());
 		return sb.toString();
 	}
 
 	@Override
-	public Object execute() throws Exception {
+	public String execute() throws Exception {
 		logger.trace("Entering function: execute()");
 		Addressing doc = session.sendInvokeRequest();
 		Document tempDoc = session.extractAddressBody(doc);
@@ -55,5 +56,16 @@ public class GetConfigResultsCmd extends WSManBaseCommand {
 		logger.trace("Exiting function: execute()");
 		return output;
 	}
+	
+    public static void main(String[] args) {
+        try {
+        	GetConfigResultsCmd cmd = new GetConfigResultsCmd("100.68.124.31", "root", "calvin","JID_004752690265");
+            Object o = cmd.execute();
+        	System.out.println("Result : {} " + o);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }
