@@ -89,4 +89,8 @@ public interface WSCommandRNDConstant {
     public static final String RESET_IDRAC_CHECK = "0";
     public static final String SHUTDOWN_IDRAC = "3";
     public static final String Management_Controller = "14";
+    
+    //Config 
+    public static final String CIM_NAMESPACE = "__cimnamespace";
+    public static final String DCIM_LCLOG = "DCIM:LifecycleLog";
 }
