@@ -53,16 +53,4 @@ public class GetConfigResultsCmd extends WSManBaseCommand {
 		logger.trace("Exiting function: execute()");
 		return "<Result>" + content + "</Result>";
 	}
-
-	public static void main(String[] args) {
-		try {
-			GetConfigResultsCmd cmd = new GetConfigResultsCmd("100.68.124.31", "root", "calvin", "JID_004752690265");
-			Object o = cmd.execute();
-			System.out.println("Result : {} " + o);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 }
