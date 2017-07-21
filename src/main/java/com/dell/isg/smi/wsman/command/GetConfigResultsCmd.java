@@ -34,7 +34,6 @@ public class GetConfigResultsCmd extends WSManBaseCommand {
 
 		logger.trace("Exiting constructor: GetConfigResultsCmd()");
 	}
-	
 
 	public String getResourceURI() {
 		StringBuilder sb = new StringBuilder(WSCommandRNDConstant.osdsvcdellbaseuri);
@@ -50,22 +49,8 @@ public class GetConfigResultsCmd extends WSManBaseCommand {
 		logger.trace("Entering function: execute()");
 		Addressing doc = session.sendInvokeRequest();
 		Document tempDoc = session.extractAddressBody(doc);
-		String content = XmlHelper.convertDocumenttoString(tempDoc);
-		String output  = content.toString().replaceAll("&gt;", ">");
-		output = output.replaceAll("&lt;", "<");
+		Object content = XmlHelper.findObjectInDocument(tempDoc, "n1:ConfigResults");
 		logger.trace("Exiting function: execute()");
-		return output;
+		return "<Result>" + content + "</Result>";
 	}
-	
-    public static void main(String[] args) {
-        try {
-        	GetConfigResultsCmd cmd = new GetConfigResultsCmd("100.68.124.31", "root", "calvin","JID_004752690265");
-            Object o = cmd.execute();
-        	System.out.println("Result : {} " + o);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
 }
