@@ -38,7 +38,7 @@ public class UnblinkLED extends WSManBaseCommand {
         logger.info("Executing UnBlinkLED (DCIM_SystemManagementService/IdentifyChassis for iDRAC: " + session.getIpAddress());
         initCommand();
         Addressing response = session.sendInvokeRequest();
-        String retValue = (String) WSManUtils.findObjectInDocument(response.getBody(), "//pre:IdentifyChassis_OUTPUT/pre:ReturnValue/text()", XPathConstants.STRING, WSManConstants.WSManClassEnum.DCIM_SystemManagementService);
+        String retValue = (String) WSManUtils.findObjectInDocument(response.getBody(), "//pre:IdentifyChassis_OUTPUT/pre:ReturnValue/text()", XPathConstants.STRING, WSManClassEnum.DCIM_SystemManagementService);
 
         if (retValue.equals("0")) {
             return true;

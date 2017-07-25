@@ -1,0 +1,2 @@
+include ':smi-lib-wsman-client'
+project(':smi-lib-wsman-client').projectDir = new File (settingsDir, '../smi-lib-wsman-client')
