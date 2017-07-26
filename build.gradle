@@ -1,9 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.sonarqube'
-apply plugin: "com.github.hierynomus.license"
+apply plugin: 'com.github.hierynomus.license'
 apply plugin: 'maven-publish'
-apply plugin: "com.jfrog.artifactory"
+apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'signing'
 apply plugin: 'maven'
 //apply plugin: 'nebula.lint'
@@ -23,12 +23,31 @@ buildscript {
 	}
   }
   dependencies {
-       classpath "io.spring.gradle:dependency-management-plugin:1.0.0.RELEASE"
-       classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
-       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.1"
+       classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
+       classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.15"
+       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1"
        //classpath 'com.netflix.nebula:gradle-lint-plugin:latest.release'
   }
+}
+
+
+//gradleLint {
+  //rules  = ['dependency-parentheses','overridden-dependency-version','duplicate-dependency-class', 'all-dependency','unused-dependency']
+//}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "rackhd :: smi-lib-wsman"
+        property "sonar.projectKey", "${group}:wsmanlib"
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'wsmanlib jar',
+                   'Implementation-Version': version
+    }
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
@@ -53,27 +72,6 @@ task javadocJar(type: Jar) {
     from javadoc
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
-//gradleLint {
-  //rules  = ['dependency-parentheses','overridden-dependency-version','duplicate-dependency-class', 'all-dependency','unused-dependency']
-//}
-
-sonarqube {
-    properties {
-        property "sonar.projectName", "SMI :: Library :: Wsmanlib"
-        property "sonar.projectKey", "org.sonarqube:wsmanlib"
-    }
-}
-
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Dell wsmanlib jar',
-                   'Implementation-Version': version
-    }
-}
-
 repositories {
 	mavenLocal()
 	maven { url "${artifactory_contextUrl}/libs-snapshot" }
@@ -82,11 +80,11 @@ repositories {
 }
 
 dependencies {
-    //compile project(':smi-lib-wsman-client')
-	compile 'com.dell.isg.smi:wsmanclient:1.0-SNAPSHOT'
-    compile 'com.dell.isg.smi:commons-elm:1.0.76'
-    compile 'com.dell.isg.smi:commons-utilities:1.0.32'
-    compile 'com.dell.isg.smi:wiseman:1.0.5'
+        //compile project(':smi-lib-wsman-client')
+        compile 'com.dell.isg.smi:wsmanclient:1.0.37'
+        compile 'com.dell.isg.smi:commons-elm:1.0.76'
+        compile 'com.dell.isg.smi:commons-utilities:1.0.32'
+        compile 'com.dell.isg.smi:wiseman:1.0.5'
 	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 	compile group: 'io.swagger', name: 'swagger-annotations', version: '1.5.13'
@@ -102,12 +100,12 @@ test {
 }
 
 uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-       	mavenDeployer
-	   {
+	repositories {
+		flatDir {
+		   dirs 'repos'
+		}
+		mavenDeployer 
+		{
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 			
 			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
@@ -118,12 +116,12 @@ uploadArchives {
 				authentication(userName: ossrhUsername, password: ossrhPassword)
 			}
 	  
-	        pom.project {
+			pom.project {
 				artifactId = "wsmanlib"
 				packaging 'jar'
 				url 'https://www.github.com/rackhd/smi-lib-wsman'
-				name 'SMI wsman LIB'
-				description 'WSMAN jar library for the System Management Integration (SMI) projects.'
+				name 'SMI WSMan Library'
+				description 'A Jar library with implementation logic for interfacing with Dell Systems using the WS-Management Protocol'
 				inceptionYear '2017'
 				
 				licenses {
@@ -135,9 +133,9 @@ uploadArchives {
 				}
 				
 				scm {
-				  connection 'scm:git:git://www.github.com/rackhd/smi-lib-wsman.git'
-				  developerConnection 'scm:git:ssh://www.github.com/rackhd/smi-lib-wsman.git'
-				  url 'http://www.github.com/rackhd/smi-lib-wsman'
+					connection 'scm:git:git://www.github.com/rackhd/smi-lib-wsman.git'
+					developerConnection 'scm:git:ssh://www.github.com/rackhd/smi-lib-wsman.git'
+					url 'http://www.github.com/rackhd/smi-lib-wsman'
 				}
 				
 				developers {
@@ -152,7 +150,11 @@ uploadArchives {
 				
 			}
 		}
-    }
+	}
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
 signing {
