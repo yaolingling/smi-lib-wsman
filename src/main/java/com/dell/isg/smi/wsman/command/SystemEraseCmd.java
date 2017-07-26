@@ -29,11 +29,14 @@ public class SystemEraseCmd extends WSManBaseCommand {
     private static final int TIME_DELAY_MILLISECONDS = 30000;
     private static final int POLL_JOB_RETRY = 12;
 
-    public SystemEraseCmd(String ipAddr, String userName, String passwd, String fileName) throws Exception {
+    public SystemEraseCmd(String ipAddr, String userName, String passwd, String[] components) throws Exception {
         super(ipAddr, userName, passwd);
         session = super.getSession();
         intiCommand();
-        session.addUserParam("file", fileName);
+        for (String component: components) {
+        	session.addUserParam("Component", component);
+        }
+        
         this.session.setInvokeCommand(WSManMethodEnum.SYSYTEM_EARSE.toString());
     }
 
@@ -85,7 +88,7 @@ public class SystemEraseCmd extends WSManBaseCommand {
     
     public static void main(String[] args){
     	try {
-			SystemEraseCmd cmd = new SystemEraseCmd("100.68.123.39","root","calvin","SystemErase.xml");
+			SystemEraseCmd cmd = new SystemEraseCmd("100.68.123.39","root","calvin", new String[]{"BIOS", "DIAG"});
 			Object result = cmd.execute();
 			System.out.println(result);
 		} catch (Exception e) {
