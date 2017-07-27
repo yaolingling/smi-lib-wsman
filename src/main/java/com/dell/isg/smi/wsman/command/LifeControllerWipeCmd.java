@@ -29,7 +29,7 @@ public class LifeControllerWipeCmd extends WSManBaseCommand {
     private static final int TIME_DELAY_MILLISECONDS = 30000;
     private static final int POLL_JOB_RETRY = 12;
 
-    public LifeControllerWipeCmd(String ipAddr, String userName, String passwd, String fileName) throws Exception {
+    public LifeControllerWipeCmd(String ipAddr, String userName, String passwd) throws Exception {
         super(ipAddr, userName, passwd);
         session = super.getSession();
         intiCommand();
@@ -84,7 +84,7 @@ public class LifeControllerWipeCmd extends WSManBaseCommand {
     
     public static void main(String[] args){
     	try {
-			LifeControllerWipeCmd cmd = new LifeControllerWipeCmd("100.68.123.39","root","calvin","SystemErase.xml");
+			LifeControllerWipeCmd cmd = new LifeControllerWipeCmd("100.68.123.39","root","calvin");
 			Object result = cmd.execute();
 			System.out.println(result);
 		} catch (Exception e) {
