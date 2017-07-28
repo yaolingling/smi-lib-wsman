@@ -49,8 +49,6 @@ public class BackupImageCmd extends WSManBaseCommand {
 		
 		if (!StringUtils.isEmpty(scheduleStartTime)) {
 			session.addUserParam("ScheduledStartTime", scheduleStartTime);
-		} else {
-			session.addUserParam("ScheduledStartTime", "TIME_NOW");
 		}
 		
 		if (!StringUtils.isEmpty(untilTime)) {
