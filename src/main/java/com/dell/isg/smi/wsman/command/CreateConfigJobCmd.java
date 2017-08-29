@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
+ * Copyright ï¿½ 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
  */
 package com.dell.isg.smi.wsman.command;
 
@@ -39,22 +39,22 @@ public class CreateConfigJobCmd extends WSManBaseCommand {
     private boolean pollJobStatus = false;
 
 
-    public CreateConfigJobCmd(String ipAddr, String userName, String passwd, boolean pollJobStatus) {
+    public CreateConfigJobCmd(String ipAddr, String userName, String passwd, boolean pollJobStatus, String target) {
         super(ipAddr, userName, passwd);
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Entering constructor: CreateConfigJobCmd(String ipAddr - %s, String userName - %s, String passwd - %s, boolean pollJobStatus - %s)", ipAddr, userName, "####", Boolean.toString(pollJobStatus)));
         }
         session = super.getSession();
-        session.setResourceUri(getResourceURI());
+        session.setResourceUri(getResourceURI(target));
         this.pollJobStatus = pollJobStatus;
 
-        this.addSelectors(getResourceURI());
+        this.addSelectors(getResourceURI(target));
 
         session.setInvokeCommand(WSManMethodEnum.CREATE_TARGET_CONFIG_JOB.toString());
         // session.addUserParam(WSManMethodParamEnum.TARGET.toString(), "BIOS.Setup.1-1");
-        // session.addUserParam(WSManMethodParamEnum.REBOOT_JOB_TYPE.toString(), "3");
+        session.addUserParam(WSManMethodParamEnum.REBOOT_JOB_TYPE.toString(), "3");
 
-        session.addUserParam(WSManMethodParamEnum.TARGET.toString(), "System.Embedded.1");
+        session.addUserParam(WSManMethodParamEnum.TARGET.toString(), target);
         session.addUserParam(WSManMethodParamEnum.SCHEDULED_START_TIME.toString(), "TIME_NOW");
 
         logger.trace("Exiting constructor: CreateConfigJobCmd()");
@@ -225,10 +225,14 @@ public class CreateConfigJobCmd extends WSManBaseCommand {
     }
 
 
-    private String getResourceURI() {
+    private String getResourceURI(String target) {
         StringBuilder sb = new StringBuilder(WSCommandRNDConstant.WSMAN_BASE_URI);
-
-        sb.append(WSCommandRNDConstant.WS_OS_SVC_NAMESPACE).append(WSManClassEnum.DCIM_SystemManagementService);
+        
+        if (StringUtils.equals(target, "System.Embedded.1")) {
+        	sb.append(WSCommandRNDConstant.WS_OS_SVC_NAMESPACE).append(WSManClassEnum.DCIM_SystemManagementService);
+        } else if (StringUtils.equals(target, "BIOS.Setup.1-1")) {
+        	sb.append(WSCommandRNDConstant.WS_OS_SVC_NAMESPACE).append(WSManClassEnum.DCIM_BIOSService);
+        }    
 
         return sb.toString();
     }

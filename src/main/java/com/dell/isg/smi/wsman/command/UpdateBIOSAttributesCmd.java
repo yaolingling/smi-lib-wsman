@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
+ * Copyright ï¿½ 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
  */
 package com.dell.isg.smi.wsman.command;
 
@@ -204,7 +204,7 @@ public class UpdateBIOSAttributesCmd extends WSManBaseCommand {
 
 		// Create the config job
 		CreateConfigJobCmd cmd = new CreateConfigJobCmd(this.session.getIpAddress(), this.session.getUser(),
-				this.session.getPassword(), true);
+				this.session.getPassword(), true, "BIOS.Setup.1-1");
 
 		// boolean jobCompleted = (Boolean)cmd.execute();
 
