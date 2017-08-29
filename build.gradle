@@ -83,7 +83,7 @@ dependencies {
     compile 'com.dell.isg.smi:wsmanclient:1.0.37'
     compile 'com.dell.isg.smi:commons-elm:1.0.76'
     compile 'com.dell.isg.smi:commons-utilities:1.0.32'
-    compile 'com.dell.isg.smi:wiseman:1.0.8'
+    compile 'com.dell.isg.smi:wiseman:1.0.9'
 	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 	compile group: 'io.swagger', name: 'swagger-annotations', version: '1.5.13'
