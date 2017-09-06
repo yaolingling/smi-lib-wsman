@@ -30,7 +30,7 @@ public class InvokeGetLCStatusCmd extends com.dell.isg.smi.wsmanclient.WSManBase
 
 
     public InvokeGetLCStatusCmd() {
-        super(com.dell.isg.smi.wsmanclient.WSManConstants.WSManInvokableEnum.DCIM_LCService, WSCommandRNDConstant.GetRemoteServicesAPIStatus);
+        super(WSManInvokableEnum.DCIM_LCService, WSCommandRNDConstant.GetRemoteServicesAPIStatus);
     }
 
 

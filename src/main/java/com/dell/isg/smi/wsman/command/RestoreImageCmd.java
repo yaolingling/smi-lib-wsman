@@ -6,10 +6,6 @@ package com.dell.isg.smi.wsman.command;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
 import com.dell.isg.smi.wsman.WSManBaseCommand;
@@ -22,59 +18,53 @@ import com.dell.isg.smi.wsman.utilities.XMLTool;
 import com.dell.isg.smi.wsmanclient.WSManClientFactory;
 
 /**
- * @author maithri.ajjampura
+ * @author Prashanth.Gowda
  *
  */
 
-public class ExportXmlConfigCmd extends WSManBaseCommand {
+public class RestoreImageCmd extends WSManBaseCommand {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExportXmlConfigCmd.class);
+	private static final Logger logger = LoggerFactory.getLogger(RestoreImageCmd.class);
 	private WSManageSession session = null;
 	private ResourceURIInfo resourceUriInfo = null;
 	private static final int TIME_DELAY_MILLISECONDS = 30000;
 	private static final int POLL_JOB_RETRY = 12;
 
-	public ExportXmlConfigCmd(String ipAddr, String userName, String passwd, String shareType, String shareName,
-			String shareAddress, String FileName, String shareUserName, String sharePassword, String target,
-			String mode) throws Exception {
+	public RestoreImageCmd(String ipAddr, String userName, String passwd, String shareType, String shareName,
+			String shareAddress, String shareUserName, String sharePassword, String passphrase, String imageName,
+			String workgroup, String scheduleStartTime, String untilTime, String preserveVDConfig) throws Exception {
 		super(ipAddr, userName, passwd);
-
 		session = super.getSession();
 		intiCommand();
 		session.addUserParam("IPAddress", shareAddress);
 		session.addUserParam("ShareName", shareName);
 		session.addUserParam("ShareType", shareType);
-		session.addUserParam("FileName", FileName);
+		if (!StringUtils.isEmpty(passphrase)) {
+			session.addUserParam("Passphrase", passphrase);
+		}
+		session.addUserParam("ImageName", imageName);
+		if (!StringUtils.isEmpty(workgroup)) {
+			session.addUserParam("Workgroup", workgroup);
+		}
+		if (!StringUtils.isEmpty(scheduleStartTime)) {
+			session.addUserParam("ScheduledStartTime", scheduleStartTime);
+		} else {
+			session.addUserParam("ScheduledStartTime", "TIME_NOW");
+		}
+		
+		if (!StringUtils.isEmpty(untilTime)) {
+			session.addUserParam("UntilTime", untilTime);
+		}
+		if (!StringUtils.isEmpty(preserveVDConfig)) {
+			session.addUserParam("PreserveVDConfig", preserveVDConfig);
+		}
 		session.addUserParam("Username", shareUserName);
 		session.addUserParam("Password", sharePassword);
-
-		/*
-		 * Optional Param
-		 */
-
-		/*
-		 * if (shutdownType !=0) { session.addUserParam("ShutdownType",
-		 * Integer.toString(shutdownType)); } else {
-		 * session.addUserParam("ShutdownType", "0"); }
-		 */
-		session.addUserParam("TimeToWait", "300");
-		session.addUserParam("EndHostPowerState", "1");
-
-		if (StringUtils.isNotBlank(target)) {
-			session.addUserParam("Target", target);
-		}
-		if (StringUtils.isNotBlank(mode)) {
-			session.addUserParam("ExportUse", mode);
-		}
-
-		this.session.setInvokeCommand(WSManMethodEnum.EXPORT_SYSTEM_CONFIGURATION.toString());
-
+		this.session.setInvokeCommand(WSManMethodEnum.RESTORE_IMAGE.toString());
 	}
 
-	private void intiCommand() throws Exception {
-
+	public void intiCommand() throws Exception {
 		session.setResourceUri(getResourceURI());
-
 		if (resourceUriInfo == null) {
 			GetResourceURIInfoCmd cmd = new GetResourceURIInfoCmd(session.getIpAddress(), session.getUser(),
 					session.getPassword(), session.isCertificateCheck(), WSManClassEnum.DCIM_LCService.toString());
@@ -83,14 +73,12 @@ public class ExportXmlConfigCmd extends WSManBaseCommand {
 				resourceUriInfo = (ResourceURIInfo) result;
 			}
 		}
-
 		session.addSelector(WSManMethodParamEnum.CREATION_CLASS_NAME.toString(),
 				resourceUriInfo.getCreationClassName());
 		session.addSelector(WSManMethodParamEnum.SYSTEM_NAME.toString(), resourceUriInfo.getSystemName());
 		session.addSelector(WSManMethodParamEnum.NAME.toString(), resourceUriInfo.getName());
 		session.addSelector(WSManMethodParamEnum.SYSTEM_CLASS_NAME.toString(),
 				resourceUriInfo.getSystemCreationClassName());
-
 	}
 
 	@Override
@@ -107,59 +95,19 @@ public class ExportXmlConfigCmd extends WSManBaseCommand {
 			return xmlConfigResponse;
 		}
 
-		logger.info("Entering execute(), Apply XML configuration for server {} onboarding ", session.getIpAddress());
+		logger.info("Entering execute(), RESTORE_IMAGE for server {} ", session.getIpAddress());
 		String content = XMLTool.convertAddressingToString(session.sendInvokeRequest());
 		String jobId = getUpdateJobID(content);
-		logger.trace("Exiting function: execute()");
+		logger.trace("Exiting function: RESTORE_IMAGE execute()");
 		IdracJobStatusCheckCmd cmd = new IdracJobStatusCheckCmd(session.getIpAddress(), session.getUser(),
 				session.getPassword(), jobId, TIME_DELAY_MILLISECONDS, POLL_JOB_RETRY);
 		xmlConfigResponse = cmd.execute();
 		return xmlConfigResponse;
-
-	}
-
-	protected String getUpdateJobID(String xmlSource) throws Exception {
-
-		String jobId = "";
-		if (xmlSource != null && !StringUtils.isEmpty(xmlSource)) {
-			Document doc = convertStringToXMLDocument(xmlSource);
-			if (doc != null) {
-				NodeList selectors = doc.getElementsByTagName("wsman:Selector");
-				if (selectors != null) {
-					for (int i = 0; i < selectors.getLength(); i++) {
-						Node selectorNode = selectors.item(i);
-
-						if (selectorNode.hasAttributes()) {
-							NamedNodeMap attribs = selectorNode.getAttributes();
-							Node attribNode = attribs.getNamedItem("Name");
-							if (attribNode != null) {
-								if (attribNode.hasChildNodes()) {
-									Node instanceNode = attribNode.getChildNodes().item(0);
-									if (instanceNode != null) {
-										String instance = instanceNode.getNodeValue();
-										if (instance.equals("InstanceID")) {
-											jobId = selectorNode.getFirstChild().getNodeValue();
-											break;
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}
-			}
-		}
-		return jobId;
 	}
 
 	private String getResourceURI() {
 		StringBuilder sb = new StringBuilder(WSCommandRNDConstant.WSMAN_BASE_URI);
-
 		sb.append(WSCommandRNDConstant.WS_OS_SVC_NAMESPACE).append(WSManClassEnum.DCIM_LCService);
-
-		logger.info("################# getResourceURI() in ExportXmlConfigCmd: " + sb.toString());
-
 		return sb.toString();
 	}
 }

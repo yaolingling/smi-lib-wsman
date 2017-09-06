@@ -43,7 +43,7 @@ public class BlinkLED extends WSManBaseCommand {
         initCommand();
         Addressing response = session.sendInvokeRequest();
 
-        String retValue = (String) WSManUtils.findObjectInDocument(response.getBody(), "//pre:IdentifyChassis_OUTPUT/pre:ReturnValue/text()", XPathConstants.STRING, WSManConstants.WSManClassEnum.DCIM_SystemManagementService);
+        String retValue = (String) WSManUtils.findObjectInDocument(response.getBody(), "//pre:IdentifyChassis_OUTPUT/pre:ReturnValue/text()", XPathConstants.STRING, WSManClassEnum.DCIM_SystemManagementService);
 
         if (retValue.equals("0")) {
             return true;

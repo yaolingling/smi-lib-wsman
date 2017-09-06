@@ -26,17 +26,16 @@ import com.dell.isg.smi.wsmanclient.WSManClientFactory;
  *
  */
 
-public class ExportXmlConfigCmd extends WSManBaseCommand {
+public class ExportFactorySettingConfigCmd extends WSManBaseCommand {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExportXmlConfigCmd.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExportFactorySettingConfigCmd.class);
 	private WSManageSession session = null;
 	private ResourceURIInfo resourceUriInfo = null;
 	private static final int TIME_DELAY_MILLISECONDS = 30000;
 	private static final int POLL_JOB_RETRY = 12;
 
-	public ExportXmlConfigCmd(String ipAddr, String userName, String passwd, String shareType, String shareName,
-			String shareAddress, String FileName, String shareUserName, String sharePassword, String target,
-			String mode) throws Exception {
+	public ExportFactorySettingConfigCmd(String ipAddr, String userName, String passwd, String shareType, String shareName,
+			String shareAddress, String FileName, String shareUserName, String sharePassword) throws Exception {
 		super(ipAddr, userName, passwd);
 
 		session = super.getSession();
@@ -48,26 +47,7 @@ public class ExportXmlConfigCmd extends WSManBaseCommand {
 		session.addUserParam("Username", shareUserName);
 		session.addUserParam("Password", sharePassword);
 
-		/*
-		 * Optional Param
-		 */
-
-		/*
-		 * if (shutdownType !=0) { session.addUserParam("ShutdownType",
-		 * Integer.toString(shutdownType)); } else {
-		 * session.addUserParam("ShutdownType", "0"); }
-		 */
-		session.addUserParam("TimeToWait", "300");
-		session.addUserParam("EndHostPowerState", "1");
-
-		if (StringUtils.isNotBlank(target)) {
-			session.addUserParam("Target", target);
-		}
-		if (StringUtils.isNotBlank(mode)) {
-			session.addUserParam("ExportUse", mode);
-		}
-
-		this.session.setInvokeCommand(WSManMethodEnum.EXPORT_SYSTEM_CONFIGURATION.toString());
+		this.session.setInvokeCommand(WSManMethodEnum.EXPORT_FACTORY_CONFIGURATION.toString());
 
 	}
 

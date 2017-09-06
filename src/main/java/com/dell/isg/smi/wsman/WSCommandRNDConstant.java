@@ -20,6 +20,7 @@ public interface WSCommandRNDConstant {
     static final String AddressingWSMan = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
     static final String osdsvcclassname = "DCIM_OSDeploymentService";
     static final String osdsvcnamespace = "root/dcim/";
+    static final String osdsvcselector = "root/dcim";
     static final String unpackinterval = "000000180000:000000:000";
     static final String vflashexposeduration = "00000000180000.000000:000";
     // All key value params required for getting IDrac Subnet Mask -->
@@ -89,4 +90,8 @@ public interface WSCommandRNDConstant {
     public static final String RESET_IDRAC_CHECK = "0";
     public static final String SHUTDOWN_IDRAC = "3";
     public static final String Management_Controller = "14";
+    
+    //Config 
+    public static final String CIM_NAMESPACE = "__cimnamespace";
+    public static final String DCIM_LCLOG = "DCIM:LifecycleLog";
 }

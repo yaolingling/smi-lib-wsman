@@ -24,24 +24,22 @@ import com.sun.ws.management.addressing.Addressing;
 public class ChangeBootOrderCmd extends WSManBaseCommand {
 
     private WSManageSession session = null;
-
-    private String instanceType = null;
-    private List<String> instanceIdList = null;
     private static final Logger logger = LoggerFactory.getLogger(ChangeBootOrderCmd.class);
 
 
-    public ChangeBootOrderCmd(String ipAddr, String userName, String passwd) {
+    public ChangeBootOrderCmd(String ipAddr, String userName, String passwd, String instanceType, List<String> instanceIdList) {
         super(ipAddr, userName, passwd);
 
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Entering constructor: ChangeBootOrderCmd(String ipAddr - %s, String userName - %s, String passwd - %s)", ipAddr, userName, "####"));
         }
         session = super.getSession();
-
+        session.addSelector(WSManMethodParamEnum.INSTANCE_ID.toString(), instanceType);
+        for (String instanceId : instanceIdList) {
+            this.session.addUserParam(WSManMethodParamEnum.SOURCE.toString(), instanceId);
+        }
         session.setResourceUri(getResourceURI());
-
         session.setInvokeCommand(WSManMethodEnum.CHANGE_BOOT_ORDER.toString());
-
         logger.trace("Exiting constructor: ChangeBootOrderCmd()");
 
     }
@@ -51,7 +49,6 @@ public class ChangeBootOrderCmd extends WSManBaseCommand {
 
         StringBuilder sb = new StringBuilder(WSCommandRNDConstant.WSMAN_BASE_URI);
         sb.append(WSCommandRNDConstant.WS_OS_SVC_NAMESPACE).append(WSManClassEnum.DCIM_BootConfigSetting);
-
         return sb.toString();
     }
 
@@ -59,16 +56,8 @@ public class ChangeBootOrderCmd extends WSManBaseCommand {
     @Override
     public String execute() throws Exception {
         logger.trace("Entering function: execute()");
-
-        session.addSelector(WSManMethodParamEnum.INSTANCE_ID.toString(), instanceType);
-
-        for (int i = 0; i < instanceIdList.size(); i++) {
-            this.session.addUserParam(WSManMethodParamEnum.SOURCE.toString(), instanceIdList.get(i));
-        }
         Addressing response = session.sendInvokeRequest();
-
         String retValue = (String) findObjectInDocument(response.getBody(), "//pre:ChangeBootOrderByInstanceID_OUTPUT/pre:ReturnValue/text()", XPathConstants.STRING);
-
         logger.trace("Exiting function: execute() with retVal: " + retValue);
         return retValue;
     }
@@ -81,26 +70,6 @@ public class ChangeBootOrderCmd extends WSManBaseCommand {
         XPathExpression expr = xpath.compile(xPathLocation);
         Object result = expr.evaluate(doc, qname);
         return result;
-    }
-
-
-    public String getInstanceType() {
-        return instanceType;
-    }
-
-
-    public void setInstanceType(String instanceType) {
-        this.instanceType = instanceType;
-    }
-
-
-    public List<String> getInstanceIdList() {
-        return instanceIdList;
-    }
-
-
-    public void setInstanceIdList(List<String> instanceIdList) {
-        this.instanceIdList = instanceIdList;
     }
 
 }
