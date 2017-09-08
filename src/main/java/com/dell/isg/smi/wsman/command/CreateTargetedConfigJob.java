@@ -1,5 +1,5 @@
 /**
- * 
+ * Copyright © 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
  */
 package com.dell.isg.smi.wsman.command;
 
@@ -114,6 +114,10 @@ public class CreateTargetedConfigJob extends WSManBaseCommand {
 	
 	 public class TargetConfigJob  implements Callable {
 
+		private static final String MESSAGE_ID = "MessageID";
+		private static final String JOB_ID = "JobId";
+		private static final String MESSAGE = "Message";
+
 		@Override
 		public Map<String, String>  call() throws Exception {
 			try {
@@ -126,7 +130,7 @@ public class CreateTargetedConfigJob extends WSManBaseCommand {
 
 		private void configJob() throws Exception {
 			try {
-				if (result.isEmpty() || (result.containsKey("JobId") && StringUtils.isBlank(result.get("JobId")))) {
+				if (result.isEmpty() || (result.containsKey(JOB_ID) && StringUtils.isBlank(result.get(JOB_ID)))) {
 					Addressing response = session.sendInvokeRequest();
 					XPathFactory xPathFactory = XPathFactory.newInstance();
 		            XPath xpath = xPathFactory.newXPath();
@@ -138,7 +142,7 @@ public class CreateTargetedConfigJob extends WSManBaseCommand {
 									WSCommandRNDConstant.SUCCESSFULL_UPDATE_JOB_RETURN))) {
 		            	String jobId = getJobID(soapBody, xpath);
 		            	if (StringUtils.isNotBlank(jobId)) {
-		            		result.put("JobId", jobId);
+		            		result.put(JOB_ID, jobId);
 		            	}
 		            	logger.info("CreateTargedConfigJob: ConfigJob: JOBId: " + jobId);
 		            } else {
@@ -146,14 +150,14 @@ public class CreateTargetedConfigJob extends WSManBaseCommand {
 		            	logger.info("CreateTargedConfigJob: ConfigJob: messageFromConfigJob: " + messageFromConfigJob);
 		            	
 		            	if (StringUtils.isNotBlank(messageFromConfigJob)) {
-		            		result.put("Message", messageFromConfigJob);
+		            		result.put(MESSAGE, messageFromConfigJob);
 		            	}            	
 		            	
 		            	String LCErrorCode = session.getLCMessageID();
 		            	logger.info("CreateTargedConfigJob: ConfigJob: LCErrorCode: " + LCErrorCode);	            	
 		            	
 		            	if (StringUtils.isNotBlank(LCErrorCode)) {
-		            		result.put("MessageID", "LCErrorCode");
+		            		result.put(MESSAGE_ID, LCErrorCode);
 		            		
 		            	}
 		            	// if we have a job ID of a failed job, delete it.
