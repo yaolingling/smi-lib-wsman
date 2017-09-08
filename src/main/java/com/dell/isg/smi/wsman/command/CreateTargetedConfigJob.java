@@ -74,12 +74,13 @@ public class CreateTargetedConfigJob extends WSManBaseCommand {
 	public Map<String, String> execute() throws Exception {
 		long interval = 30;
 		TimeUnit unit = TimeUnit.SECONDS;
+		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 		try {
-			final TargetConfigJob targetConfigJob = new TargetConfigJob();
+			final TargetConfigJob targetConfigJob = new TargetConfigJob();			
 			targetConfigJob.configJob();
 			
 			if (!result.containsKey("JobId")) {
-				final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+				
 								
 				for (int i=0; i<5; i++) {					
 					ScheduledFuture<Map<String, String>> future = scheduler.schedule(targetConfigJob, interval, unit);
@@ -107,6 +108,7 @@ public class CreateTargetedConfigJob extends WSManBaseCommand {
 			
 		} catch (Exception e) {
 			logger.error("Exception in CreateTargedConfigJob: execute: "+ e.getMessage());
+			scheduler.shutdown();
 			return result;
 		}
 		
