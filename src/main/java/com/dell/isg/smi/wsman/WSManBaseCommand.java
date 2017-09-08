@@ -1,5 +1,5 @@
 /**
- * Copyright © 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
+ * Copyright ï¿½ 2017 DELL Inc. or its subsidiaries.  All Rights Reserved.
  */
 package com.dell.isg.smi.wsman;
 
@@ -128,7 +128,7 @@ public abstract class WSManBaseCommand {
     }
 
     public enum WSManMethodParamEnum {
-        INSTANCE_ID("InstanceID"), SOURCE("source"), ENABLED_STATE("EnabledState"), REBOOT_JOB_TYPE("RebootJobType"), SCHEDULED_START_TIME("ScheduledStartTime"), SYSTEM_CLASS_NAME("SystemCreationClassName"), CREATION_CLASS_NAME("CreationClassName"), SYSTEM_NAME("SystemName"), NAME("Name"), TARGET("Target"), REBOOT_IF_REQUIRED("RebootIfRequired"), REQUESTED_STATE("RequestedState"), TIME_OUT_PERIOD("TimeoutPeriod"), ATTRIBUTE_NAME("AttributeName"), ATTRIBUTE_VALUE("AttributeValue"), PROVISIONING_SERVER("ProvisioningServer"), RESET_TO_FACTORY_DEFAULTS("ResetToFactoryDefaults"), PERFORM_AUTO_DISCOVERY("PerformAutoDiscovery");
+        INSTANCE_ID("InstanceID"), SOURCE("source"), ENABLED_STATE("EnabledState"), REBOOT_JOB_TYPE("RebootJobType"),UNTIL_TIME("UnitTime"), SCHEDULED_START_TIME("ScheduledStartTime"), SYSTEM_CLASS_NAME("SystemCreationClassName"), CREATION_CLASS_NAME("CreationClassName"), SYSTEM_NAME("SystemName"), NAME("Name"), TARGET("Target"), REBOOT_IF_REQUIRED("RebootIfRequired"), REQUESTED_STATE("RequestedState"), TIME_OUT_PERIOD("TimeoutPeriod"), ATTRIBUTE_NAME("AttributeName"), ATTRIBUTE_VALUE("AttributeValue"), PROVISIONING_SERVER("ProvisioningServer"), RESET_TO_FACTORY_DEFAULTS("ResetToFactoryDefaults"), PERFORM_AUTO_DISCOVERY("PerformAutoDiscovery");
         String enumValue;
 
 
