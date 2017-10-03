@@ -62,10 +62,7 @@ import com.sun.ws.management.transfer.Transfer;
 import com.sun.ws.management.transfer.TransferMessageValues;
 import com.sun.ws.management.transfer.TransferUtility;
 
-/**
- * @author ANTHONY_CROUCH
- *
- */
+
 public class WSManageSession {
 
     private static String transferMsgActionTypePut = "http://schemas.xmlsoap.org/ws/2004/09/transfer/Put";
@@ -329,7 +326,7 @@ public class WSManageSession {
         this.ipAddress = destIP;
         this.certificateCheck = bCertCheck;
         this.destination = String.format("https://%s:%s/wsman", destIP, port);
-        this.httpConnection = new HttpConnection(destination, destIP, this.certificateCheck);
+        this.httpConnection = new HttpConnection(destination, destIP, this.certificateCheck, login, password);
         // this.connection.setTimeout(to);
     }
 
@@ -338,9 +335,13 @@ public class WSManageSession {
      * Method used to set authentication correctly
      */
     private void initializeSecurity() {
-        // SpectreAuthenticator auth = new SpectreAuthenticator(this.user,this.password,this.destination);
-        // httpConnection.setAuthenticator(auth);
-        Authenticator.setDefault(new SpectreAuthenticator(this.user, this.password, this.destination));
+
+    	// Set default authenticator with empty credentials.  Proper credentials are passed as a request property in the
+    	// HttpConnection object.  This will prevent authenticator from allowing calls with invalid credentials to succeed
+    	// due to prior calls setting valid credentials.
+    	//TODO: This should be reviewed and fixed in a more appropriate manner.  Best course of action is to use wsmanClient
+    	// exclusively.
+    	Authenticator.setDefault(new SpectreAuthenticator("", "", this.destination));
 
         try {
             httpConnection.setTrustManager();

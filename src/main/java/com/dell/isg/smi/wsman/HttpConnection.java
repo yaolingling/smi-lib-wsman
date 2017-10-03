@@ -13,8 +13,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -33,10 +35,11 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBException;
 import javax.xml.soap.SOAPException;
-import javax.xml.ws.http.HTTPException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -49,17 +52,12 @@ import org.slf4j.LoggerFactory;
 import com.sun.ws.management.Management;
 import com.sun.ws.management.addressing.Addressing;
 
-/**
- *
- *
- *
- */
 public class HttpConnection {
 
     private HttpsURLConnection connection = null;
     private String destination = null;
     private String destIP = null;
-    private int timeout = 60000; // default timeout is 60 seconds
+    private int timeout = 15000; // default timeout is 15 seconds
     private boolean bCheckCertificate = false; // default policy for cert check is false
 
     // set up a logger
@@ -72,16 +70,20 @@ public class HttpConnection {
     private X509Certificate[] certChain = null;
 
     public SSLContext sslContext = null;
+    private String userName;
+    private String password;
 
 
     /**
      *
      * @param dest dest is target URL
      */
-    public HttpConnection(String dest, String destIP, boolean bCheckCert) {
+    public HttpConnection(String dest, String destIP, boolean bCheckCert, String user, String password) {
         destination = dest;
         this.destIP = destIP;
         this.bCheckCertificate = bCheckCert;
+        this.userName = user;
+        this.password = password;
     }
 
 
@@ -89,235 +91,12 @@ public class HttpConnection {
         timeout = to;
     }
 
-    // /**
-    // *
-    // * @param msg
-    // * @return
-    // * @throws IOException
-    // * @throws JAXBException
-    // * @throws SOAPException
-    // */
-    // public Addressing sendHttp(Addressing msg) throws IOException, JAXBException, SOAPException
-    // {
-    // OutputStream out = null;
-    // InputStream in = null;
-    // try {
-    // initializeConnection();
-    // logger.info( "Doing HTTP Connect...");
-    // connection.connect();
-    // logger.info( "Doing HTTP Connect Successful");
-    // out = connection.getOutputStream();
-    // msg.writeTo(out);
-    // in = connection.getInputStream();
-    // checkResponse();
-    // Addressing reply = new Addressing(in);
-    // connection.disconnect();
-    // return reply;
-    // } finally {
-    // if(out != null) out.close();
-    // if(in != null) in.close();
-    // }
-    // }
-    //
-    // public Addressing sendHttp(Management msg) throws IOException, JAXBException, SOAPException
-    // {
-    // OutputStream out = null;
-    // InputStream in = null;
-    // try {
-    // initializeConnection();
-    // logger.info( "Doing HTTP Connect...");
-    // connection.connect();
-    // logger.info( "Doing HTTP Connect Successful");
-    // out = connection.getOutputStream();
-    // msg.writeTo(out);
-    // in = connection.getInputStream();
-    // checkResponse();
-    // Addressing reply = new Addressing(in);
-    // connection.disconnect();
-    // return reply;
-    // } finally {
-    // if(out != null) out.close();
-    // if(in != null) in.close();
-    // }
-    // }
-
-
-    // public Addressing sendHttp(Addressing msg) throws IOException, JAXBException, SOAPException
-    // {
-    // OutputStream out = null;
-    // InputStream in = null;
-    // Addressing reply = null;
-    // long connectionTimeoutTime = System.currentTimeMillis() + timeout;
-    // String sOutput = "";
-    // StringBuilder result = new StringBuilder();
-    // int unauthorizedCount = 0;
-    //
-    // while(true){
-    // try {
-    // initializeConnection();
-    // result.setLength(0);
-    // logger.info( destIP + " Doing HTTP Connect(Addressing)...");
-    // connection.connect();
-    // logger.info( destIP + " Doing HTTP Connect Successful");
-    // out = connection.getOutputStream();
-    // msg.writeTo(out);
-    // in = connection.getInputStream();
-    //
-    // long readStartTime = System.currentTimeMillis();
-    //
-    // java.util.Vector<Byte> v = new java.util.Vector<Byte>(in.available());
-    //
-    // int input = 0;
-    // while(input != -1){
-    // input = in.read();
-    // if(input >= 0){
-    // if(input < 32) input = 32; // convert control chars to spaces
-    // v.add( (byte) (input&0xff) );
-    // }
-    // }
-    // byte[] ba = new byte[v.size()];
-    // for(int i=0; i<v.size(); i++){
-    // ba[i] = v.get(i);
-    // }
-    // sOutput = new String(ba);
-    //
-    // checkResponse();
-    // reply = new Addressing(new java.io.ByteArrayInputStream(ba));
-    //
-    // logger.debug("Input stream read time in mS: " + (System.currentTimeMillis() -
-    // readStartTime));
-    //
-    // connection.disconnect();
-    // break;
-    // } catch(IOException ioe) {
-    // logger.debug("Caught IO exception: " + ioe.getMessage());
-    // int rc = this.checkResponse();
-    // if(rc == HttpURLConnection.HTTP_UNAUTHORIZED){
-    // if(++unauthorizedCount >= MAX_AUTHENTICATION_RETRY) {
-    // logger.error(ioe.getMessage());
-    // throw ioe;
-    // }
-    // }
-    // if(System.currentTimeMillis() > connectionTimeoutTime){
-    // logger.error(ioe.getMessage());
-    // throw ioe;
-    // }
-    // try {
-    // Thread.sleep(2000);
-    // } catch (InterruptedException e) {
-    // logger.error(e.getMessage());
-    // }
-    // }
-    // catch( SOAPException soe )
-    // {
-    // logger.error("SOAPException sendHttp: " + destIP, soe );
-    // // dump raw data to log file
-    // sOutput = sOutput.replaceAll("&gt;", ">");
-    // sOutput = sOutput.replaceAll("&lt;", "<");
-    // logger.error("SOAPException sendHttp: " + sOutput );
-    // // throw exception to top level code
-    // throw soe;
-    // }
-    //
-    // finally {
-    // if(out != null) out.close();
-    // if(in != null) in.close();
-    // }
-    // }
-    // return reply;
-    // }
-    //
-    // public Addressing sendHttp(Management msg) throws IOException, JAXBException, SOAPException
-    // {
-    // OutputStream out = null;
-    // InputStream in = null;
-    // Addressing reply = null;
-    // String sOutput = "";
-    // long connectionTimeoutTime = System.currentTimeMillis() + timeout;
-    // StringBuilder result = new StringBuilder();
-    // int unauthorizedCount = 0;
-    //
-    // while(true){
-    // try {
-    // initializeConnection();
-    // result.setLength(0);
-    // logger.info( destIP + " Doing HTTP Connect(Management)...");
-    // connection.connect();
-    // logger.info( destIP + " Doing HTTP Connect Successful");
-    // out = connection.getOutputStream();
-    // msg.writeTo(out);
-    // in = connection.getInputStream();
-    //
-    // long readStartTime = System.currentTimeMillis();
-    //
-    // java.util.Vector<Byte> v = new java.util.Vector<Byte>(in.available());
-    //
-    // int input = 0;
-    // while(input != -1){
-    // input = in.read();
-    // if(input >= 0){
-    // if(input < 32) input = 32; // convert control chars to spaces
-    // v.add( (byte) (input&0xff) );
-    // }
-    // }
-    //
-    // byte[] ba = new byte[v.size()];
-    // for(int i=0; i<v.size(); i++){
-    // ba[i] = v.get(i);
-    // }
-    // sOutput = new String(ba);
-    //
-    // checkResponse();
-    // reply = new Addressing(new java.io.ByteArrayInputStream(ba));
-    //
-    // logger.debug("Input stream read time in mS: " + (System.currentTimeMillis() -
-    // readStartTime));
-    //
-    // connection.disconnect();
-    // break;
-    // } catch(IOException ioe) {
-    // logger.debug("Caught IO exception: " + ioe.getMessage());
-    // int rc = this.checkResponse();
-    // if(rc == HttpURLConnection.HTTP_UNAUTHORIZED){
-    // if(++unauthorizedCount >= MAX_AUTHENTICATION_RETRY) {
-    // logger.error(ioe.getMessage());
-    // throw ioe;
-    // }
-    // }
-    // if(System.currentTimeMillis() > connectionTimeoutTime){
-    // logger.error(ioe.getMessage());
-    // throw ioe;
-    // }
-    // try {
-    // Thread.sleep(2000);
-    // } catch (InterruptedException e) {
-    // logger.error(e.getMessage());
-    // }
-    // }
-    // catch( SOAPException soe )
-    // {
-    // logger.error("SOAPException sendHttp: " + destIP, soe );
-    // // dump raw data to log file
-    // sOutput = sOutput.replaceAll("&gt;", ">");
-    // sOutput = sOutput.replaceAll("&lt;", "<");
-    // logger.error("SOAPException sendHttp: " + sOutput );
-    // // throw exception to top level code
-    // throw soe;
-    // }
-    // finally {
-    // if(out != null) out.close();
-    // if(in != null) in.close();
-    // }
-    // }
-    // return reply;
-    // }
 
     public Addressing sendHttp(Addressing msg) throws IOException, JAXBException, SOAPException {
         Addressing reply = null;
         long connectionTimeoutTime = System.currentTimeMillis() + timeout;
         String sOutput = "";
         StringBuilder result = new StringBuilder();
-        int unauthorizedCount = 0;
 
         while (true) {
             OutputStream out = null;
@@ -354,33 +133,22 @@ public class HttpConnection {
                 checkResponse();
                 byteArrayInputStream = new ByteArrayInputStream(sOutput.getBytes());
                 reply = new Addressing(byteArrayInputStream);
-                connection.disconnect();
                 break;
             } catch (IOException ioe) {
                 logger.debug("Caught IO exception: " + ioe.getMessage());
-                // if we timed out, don't bother trying to check the response code.
-                // because it will try for a while and then time out trying to get
-                // the response off the session
-                if ("Connection Timed Out".equalsIgnoreCase(ioe.getMessage())) {
-                    throw ioe;
-                } else {
-                    int rc = this.checkResponse();
-                    if (rc == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                        logger.error(ioe.getMessage());
-                        throw ioe;
-                    }
-
-                    if (rc == HttpURLConnection.HTTP_BAD_REQUEST) {
-                        logger.error(ioe.getMessage());
-                        throw ioe;
-                    }
+                int rc = this.checkResponse();
+                if (rc == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    logger.error(ioe.getMessage());
+                    throw new NotAuthorizedException(ioe);
                 }
-
+                if (rc == HttpURLConnection.HTTP_BAD_REQUEST) {
+                    logger.error(ioe.getMessage());
+                    throw new BadRequestException(ioe);
+                }
                 if (System.currentTimeMillis() > connectionTimeoutTime) {
                     logger.error(ioe.getMessage());
                     throw ioe;
                 }
-
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -397,6 +165,7 @@ public class HttpConnection {
             }
 
             finally {
+                connection.disconnect();
                 StreamUtils.closeStreamQuietly(in);
                 StreamUtils.closeStreamQuietly(out);
                 StreamUtils.closeStreamQuietly(inputStringReader);
@@ -414,7 +183,6 @@ public class HttpConnection {
         String sOutput = "";
         long connectionTimeoutTime = System.currentTimeMillis() + timeout;
         StringBuilder result = new StringBuilder();
-        int unauthorizedCount = 0;
 
         while (true) {
             OutputStream out = null;
@@ -451,23 +219,18 @@ public class HttpConnection {
                 checkResponse();
                 byteArrayInputStream = new ByteArrayInputStream(sOutput.getBytes());
                 reply = new Addressing(byteArrayInputStream);
-                connection.disconnect();
                 break;
             } catch (IOException ioe) {
                 logger.debug("Caught IO exception: " + ioe.getMessage());
                 int rc = this.checkResponse();
                 if (rc == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     logger.error(ioe.getMessage());
-                    // if we are in lockdown mode we may get the maxredirects message so
-                    // throw a new unauthorzed message instead.
-                    throw new HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED);
+                    throw new NotAuthorizedException(ioe);
                 }
-
                 if (rc == HttpURLConnection.HTTP_BAD_REQUEST) {
                     logger.error(ioe.getMessage());
-                    throw ioe;
+                    throw new BadRequestException(ioe);
                 }
-
                 if (System.currentTimeMillis() > connectionTimeoutTime) {
                     logger.error(ioe.getMessage());
                     throw ioe;
@@ -486,6 +249,7 @@ public class HttpConnection {
                 // throw exception to top level code
                 throw soe;
             } finally {
+                connection.disconnect();
                 StreamUtils.closeStreamQuietly(inputStreamReader);
                 StreamUtils.closeStreamQuietly(buffer);
                 StreamUtils.closeStreamQuietly(in);
@@ -534,7 +298,6 @@ public class HttpConnection {
 
                 sOutput = result.toString();
                 checkResponse();
-                connection.disconnect();
                 break;
             } catch (IOException ioe) {
                 logger.debug("Caught IO exception: " + ioe.getMessage());
@@ -543,14 +306,12 @@ public class HttpConnection {
                     logger.error(ioe.getMessage());
                     // if we are in lockdown mode we may get the maxredirects message so
                     // throw a new unauthorzed message instead.
-                    throw new HTTPException(HttpURLConnection.HTTP_UNAUTHORIZED);
+                    throw new NotAuthorizedException(ioe);
                 }
-
                 if (rc == HttpURLConnection.HTTP_BAD_REQUEST) {
                     logger.error(ioe.getMessage());
-                    throw ioe;
+                    throw new BadRequestException(ioe);
                 }
-
                 if (System.currentTimeMillis() > connectionTimeoutTime) {
                     logger.error(ioe.getMessage());
                     throw ioe;
@@ -569,6 +330,7 @@ public class HttpConnection {
                 // throw exception to top level code
                 throw soe;
             } finally {
+                connection.disconnect();
                 StreamUtils.closeStreamQuietly(inputStreamReader);
                 StreamUtils.closeStreamQuietly(buffer);
                 StreamUtils.closeStreamQuietly(in);
@@ -667,7 +429,6 @@ public class HttpConnection {
         long connectionTimeoutTime = System.currentTimeMillis() + timeout;
         String sOutput = "";
         StringBuilder result = new StringBuilder();
-        int unauthorizedCount = 0;
 
         while (true) {
             try {
@@ -693,7 +454,6 @@ public class HttpConnection {
                 sOutput = result.toString();
                 checkResponse();
                 reply = sOutput;
-                connection.disconnect();
                 break;
             } catch (SSLHandshakeException she) {
                 logger.debug("Caught ssl handshake expression" + she.getMessage());
@@ -716,6 +476,7 @@ public class HttpConnection {
                     logger.error(e.getMessage());
                 }
             } finally {
+                connection.disconnect();
                 IOUtils.closeQuietly(in);
                 IOUtils.closeQuietly(writer);
             }
@@ -731,7 +492,6 @@ public class HttpConnection {
         long connectionTimeoutTime = System.currentTimeMillis() + timeout;
         String sOutput = "";
         StringBuilder result = new StringBuilder();
-        int unauthorizedCount = 0;
 
         while (true) {
             try {
@@ -774,7 +534,6 @@ public class HttpConnection {
                 sOutput = result.toString();
                 checkResponse();
                 reply = sOutput;
-                connection.disconnect();
                 break;
             } catch (SSLHandshakeException she) {
                 logger.debug("Caught ssl handshake expression" + she.getMessage());
@@ -797,6 +556,7 @@ public class HttpConnection {
                     logger.error(e.getMessage());
                 }
             } finally {
+                connection.disconnect();
                 IOUtils.closeQuietly(in);
                 IOUtils.closeQuietly(writer);
             }
@@ -839,8 +599,20 @@ public class HttpConnection {
         connection.setRequestProperty("Content-Type", "application/soap+xml;charset=utf-8");
         connection.setRequestProperty("User-Agent", "https://wiseman.dev.java.net");
         connection.setRequestProperty("Accept", "application/soap+xml;charset=utf-8, application/soap+xml;charset=utf-16");
+        connection.setRequestProperty("Connection", "close");
+        configureAuthorization(connection);
     }
 
+    private void configureAuthorization(URLConnection uc) {
+        String userpass = this.userName + ":" + this.password;
+        String authString = null;
+        try {
+            authString = "Basic " + DatatypeConverter.printBase64Binary(userpass.getBytes("ISO-8859-1"));
+        } catch (UnsupportedEncodingException e) {
+            logger.warn("unsupported Encoding exception", e);
+        }
+        uc.setRequestProperty("Authorization", authString);
+    }
 
     private int checkResponse() throws IOException {
         int respCode = 0;
