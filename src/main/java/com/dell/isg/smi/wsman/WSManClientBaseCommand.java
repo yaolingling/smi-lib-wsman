@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -31,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.dmtf.schemas.wbem.wsman._1.wsman.AttributableEmpty;
 import org.dmtf.schemas.wbem.wsman._1.wsman.AttributablePositiveInteger;
 import org.dmtf.schemas.wbem.wsman._1.wsman.EnumerationModeType;
-import org.dmtf.schemas.wbem.wsman._1.wsman.SelectorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -49,7 +47,6 @@ import com.dell.isg.smi.wsman.WSManageSession.EnumReferenceParam;
 import com.dell.isg.smi.wsman.command.IWSManClientCommand;
 import com.dell.isg.smi.wsman.command.PersonalNamespaceContext;
 import com.dell.isg.smi.wsman.command.entity.WsmanCredentials;
-import com.dell.isg.smi.wsmanclient.util.WSManUtils;
 import com.sun.ws.management.addressing.Addressing;
 import com.sun.ws.management.enumeration.Enumeration;
 import com.sun.ws.management.enumeration.EnumerationExtensions.Mode;
@@ -57,8 +54,6 @@ import com.sun.ws.management.enumeration.EnumerationExtensions.Mode;
 public abstract class WSManClientBaseCommand<T> implements IWSManClientCommand<T> {
 
     private WSManageSession WSManSession = null;
-
-	private List<SelectorType> selectors;
 
     // set up a logger
     private static final Logger logger = LoggerFactory.getLogger(WSManClientBaseCommand.class);
@@ -155,6 +150,7 @@ public abstract class WSManClientBaseCommand<T> implements IWSManClientCommand<T
 
     public abstract Object execute() throws Exception;
 
+
     // FIXME: Attempt to factor out the following, or at least enum it
     // protected static String getInstanceId(String updateType) {
     // String type = updateType.toLowerCase();
@@ -206,15 +202,6 @@ public abstract class WSManClientBaseCommand<T> implements IWSManClientCommand<T
 
     }
 
-    protected Object sendRequestEnumerationReturnJson() throws Exception {
-        Document tempDoc = WSManUtils.toDocument(getSession().sendRequestEnumerationGetXml(null));
-        return WSManUtilities.toJson(tempDoc);
-    }
-    
-    public T parse(String xml) throws Exception {
-        Document tempDoc = WSManUtils.toDocument(xml);
-        return (T) WSManUtilities.toJson(tempDoc);
-    }
 
     protected org.w3c.dom.Document sendRequestEnumerationReturnDocument() throws Exception {
         Addressing retAddressing = getSession().sendRequestEnumeration();
@@ -240,7 +227,7 @@ public abstract class WSManClientBaseCommand<T> implements IWSManClientCommand<T
 
     public enum WSManClassEnum {
 
-        DCIM_SoftwareIdentity, DCIM_SoftwareInstallationService, DCIM_SoftwareUpdateConcreteJob, DCIM_SystemView, DCIM_ControllerView, DCIM_VirtualDiskView, DCIM_PhysicalDiskView, DCIM_BIOSEnumeration, DCIM_BootSourceSetting, DCIM_BootConfigSetting, DCIM_BIOSString, DCIM_BIOSInteger, DCIM_NICView, DCIM_LifecycleJob, DCIM_JobService, InstallFromURI, CreateRebootJob, SetupJobQueue, DCIM_ComputerSystem, DCIM_OSDeploymentService, DCIM_BIOSService, DCIM_OEM_DataAccessModule, DCIM_RAIDService, CIM_ComputerSystem, DCIM_LCService, DCIM_IDRACCardView, DCIM_SPComputerSystem, CIM_IPProtocolEndpoint, CIM_Chassis, CIM_SoftwareIdentity, CIM_InstalledSoftwareIdentity, DCIM_Sellogentry, DCIM_Memoryview, DCIM_Powersupplyview, DCIM_PCIDeviceView, DCIM_CPUView, DCIM_EnclosureView, DCIM_iDRACCardAttribute, DCIM_PSNumericsensor, DCIM_iDRACCardString, DCIM_iDRACCardEnumeration, DCIM_NICStatistics, DCIM_NICCapabilities, DCIM_BaseMetricValue, DCIM_AggregationMetricValue, CIM_Account, DCIM_LicenseManagementService, DCIM_LicensableDevice, DCIM_SelRecordLog, DCIM_License, DCIM_SystemManagementService, DCIM_ModularChassisView, DCIM_BladeServerView, CIM_PhysicalElement, DCIM_FanView, DCIM_VFlashView, DCIM_Sensor, DCIM_NumericSensor, DCIM_ControllerBatteryView, DCIM_PCIeSSDView, DCIM_NICEnumeration, DCIM_NICString, DCIM_NICInteger, DCIM_RAIDEnumeration, DCIM_RAIDString, DCIM_RAIDInteger, DCIM_SystemString, DCIM_LCLogEntry;
+        DCIM_SoftwareIdentity, DCIM_SoftwareInstallationService, DCIM_SoftwareUpdateConcreteJob, DCIM_SystemView, DCIM_ControllerView, DCIM_VirtualDiskView, DCIM_PhysicalDiskView, DCIM_BIOSEnumeration, DCIM_BootSourceSetting, DCIM_BootConfigSetting, DCIM_BIOSString, DCIM_BIOSInteger, DCIM_NICView, DCIM_LifecycleJob, DCIM_JobService, InstallFromURI, CreateRebootJob, SetupJobQueue, DCIM_ComputerSystem, DCIM_OSDeploymentService, DCIM_BIOSService, DCIM_OEM_DataAccessModule, DCIM_RAIDService, CIM_ComputerSystem, DCIM_LCService, DCIM_IDRACCardView, DCIM_SPComputerSystem, CIM_IPProtocolEndpoint, CIM_Chassis, CIM_SoftwareIdentity, CIM_InstalledSoftwareIdentity, DCIM_Sellogentry, DCIM_Memoryview, DCIM_Powersupplyview, DCIM_PCIDeviceView, DCIM_CPUView, DCIM_EnclosureView, DCIM_iDRACCardAttribute, DCIM_PSNumericsensor, DCIM_iDRACCardString, DCIM_iDRACCardEnumeration, DCIM_NICStatistics, DCIM_NICCapabilities, DCIM_BaseMetricValue, DCIM_AggregationMetricValue, CIM_Account, DCIM_LicenseManagementService, DCIM_LicensableDevice, DCIM_SelRecordLog, DCIM_License, DCIM_SystemManagementService, DCIM_ModularChassisView, DCIM_BladeServerView, CIM_PhysicalElement, DCIM_FanView, DCIM_VFlashView, DCIM_Sensor, DCIM_NumericSensor, DCIM_ControllerBatteryView, DCIM_PCIeSSDView;
     }
 
     public enum WSManMethodParamEnum {
@@ -551,7 +538,7 @@ public abstract class WSManClientBaseCommand<T> implements IWSManClientCommand<T
         org.xmlsoap.schemas.ws._2004._09.enumeration.ObjectFactory wsen = new org.xmlsoap.schemas.ws._2004._09.enumeration.ObjectFactory();
 
         Body body = env.createBody();
-        
+
         Enumerate enumerate = wsen.createEnumerate();
         body.getAny().add(enumerate);
 
@@ -590,31 +577,6 @@ public abstract class WSManClientBaseCommand<T> implements IWSManClientCommand<T
 
     public String getResourceURI() {
         throw new NotImplementedException("Not Implemented");
-    }
-
-	public List<SelectorType> getSelectors() {
-		return selectors;
-	}
-
-
-	public void setSelectors(List<SelectorType> selectors) {
-		this.selectors = selectors;
-	}
-
-    /**
-     * Add Selector with this name/value pair
-     *
-     * @param key
-     * @param value
-     */
-    public void addSelector(String key, String value) {
-    	if(selectors == null){
-    		selectors = new ArrayList<SelectorType>();
-    	}
-        SelectorType sel = new SelectorType();
-        sel.setName(key);
-        sel.getContent().add(value);
-        selectors.add(sel);
     }
 
 }

@@ -716,51 +716,6 @@ public class WSManageSession {
         }
     }
 
-    public String sendRequestEnumerationGetXml(Mode enumMode) throws SOAPException, JAXBException, DatatypeConfigurationException, IOException, XPathExpressionException {
-
-        if (destination == null) {
-            throw new IllegalArgumentException("Destination is Null.");
-        }
-
-        if (resourceUri == null) {
-            throw new IllegalArgumentException("resourceUrI is null.");
-        }
-
-        EnumerationMessageValues enumRequest = EnumerationMessageValues.newInstance();
-        enumRequest.setExpires(-1);// this will be changed later in code.
-        enumRequest.setRequestForOptimizedEnumeration(true);
-
-        if (maxElements != 0) {
-            enumRequest.setMaxElements(maxElements);
-        }
-        enumRequest.setTo(destination);
-        enumRequest.setResourceUri(resourceUri);
-        enumRequest.setMaxTime(6000L);
-
-        if (enumMode != null) {
-            enumRequest.setEnumerationMode(enumMode);
-        }
-        if (selectors != null && selectors.size() > 0) {
-            enumRequest.setSelectorSet(selectors);
-        }
-
-        Enumeration msg = EnumerationUtility.buildMessage(null, enumRequest);
-        Management settings = ManagementUtility.buildMessage(msg, null);
-
-        // Add enumeration filters to soap message body
-        if (!filters.isEmpty()) {
-            addEnumFilter(settings.getBody());
-        }
-
-        // Fix the data.
-        settings = new Management(this.fixMessage(settings));
-
-        // Send the WS-Management request
-        if (soapLogger.isDebugEnabled()) { // if(debugFlag){
-            writeCmdDetails(settings, "Request");
-        }
-        return httpConnection.sendHttpGetXml(settings);
-    }
 
     /**
      * Method to send GetRequest

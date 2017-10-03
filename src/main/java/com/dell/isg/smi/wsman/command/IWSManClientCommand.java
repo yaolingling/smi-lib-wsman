@@ -3,9 +3,6 @@
  */
 package com.dell.isg.smi.wsman.command;
 
-import java.util.List;
-
-import org.dmtf.schemas.wbem.wsman._1.wsman.SelectorType;
 import org.w3._2003._05.soap_envelope.Body;
 
 public interface IWSManClientCommand<T> {
@@ -37,8 +34,5 @@ public interface IWSManClientCommand<T> {
      * @return The action URI.
      */
     String getAction();
-
-
-	List<SelectorType> getSelectors();
 
 }

@@ -6,13 +6,11 @@ package com.dell.isg.smi.wsman.command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dell.isg.smi.wsman.IdracWSManClient;
 import com.dell.isg.smi.wsman.WSCommandRNDConstant;
-import com.dell.isg.smi.wsman.WSManClientBaseCommand;
-import com.dell.isg.smi.wsman.WSManClientFactory;
+import com.dell.isg.smi.wsman.WSManBaseCommand;
 import com.dell.isg.smi.wsman.WSManageSession;
 
-public class ClearSelLog extends WSManClientBaseCommand<Object> {
+public class ClearSelLog extends WSManBaseCommand {
     private WSManageSession session = null;
     private String instanceID = null;
 
@@ -44,15 +42,8 @@ public class ClearSelLog extends WSManClientBaseCommand<Object> {
 
     }
 
-    
-    public ClearSelLog() {
-    	if(instanceID != null){
-    		this.addSelector(WSManMethodParamEnum.INSTANCE_ID.toString(), instanceID);
-    	}
-	}
 
-
-	public String getResourceURI() {
+    private String getResourceURI() {
 
         StringBuilder sb = new StringBuilder(WSCommandRNDConstant.WSMAN_BASE_URI);
 
@@ -61,32 +52,8 @@ public class ClearSelLog extends WSManClientBaseCommand<Object> {
         return sb.toString();
     }
 
-    
-	@SuppressWarnings("unused")
-	public static void main(String [] args){
-    	//EnumerateBIOSStringCmd cmd = new EnumerateBIOSStringCmd("100.68.124.34", "root", "calvin");
-    	try {
-    		Object result;
-    		//result = cmd.execute();
-    		
-            IdracWSManClient idracWsManClient = WSManClientFactory.getIdracWSManClient("100.68.124.34", "root", "calvin");
-            result = idracWsManClient.execute(new ClearSelLog());
-            
-            int x = 0;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
 
-    
-	@Override
-    public String getAction() {
-        return getResourceURI() + "/" + WSManMethodEnum.CLEAR_SEL_LOG.toString();
-    }
-
-    
-	@Override
+    @Override
     public String execute() throws Exception {
         logger.trace("Entering function: execute()");
 
