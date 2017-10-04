@@ -29,7 +29,6 @@ import com.dell.isg.smi.wsman.command.EnumerateJobs;
 import com.dell.isg.smi.wsman.command.EnumerateSoftwareIdentityCmd;
 import com.dell.isg.smi.wsman.command.GetRSStatusCmd;
 import com.dell.isg.smi.wsman.command.GetRemoteServicesAPIStatus;
-import com.dell.isg.smi.wsman.command.PersonalNamespaceContext;
 import com.dell.isg.smi.wsman.command.GetRSStatusCmd.RSStatusEnum;
 import com.dell.isg.smi.wsman.command.GetRemoteServicesAPIStatus.RSAPIStatusEnum;
 import com.dell.isg.smi.wsman.command.entity.DCIMSoftwareIdentityType;
